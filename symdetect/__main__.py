@@ -22,13 +22,13 @@ def train_gryphon(dir: pathlib.Path) -> None:
     # Divide into train and test image sets.
     num_test_files = int(len(files) * 0.1)
     train_set = files[:-num_test_files]
-    test_set = files[-num_test_files:]
+    validation_set = files[-num_test_files:]
 
     print(f'Total number of JPG images found={len(files)}')
     print(f' Train files={len(train_set)}')
-    print(f' Test files={len(test_set)}')
+    print(f' Validation files={len(validation_set)}')
 
-    random.seed(177)
+    # random.seed(177)
 
     plt.figure(figsize=(9, 9))
 
