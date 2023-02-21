@@ -3,7 +3,8 @@ import pathlib
 import random
 
 import symdetect.imagedataset as id
-import symdetect.symbolgen as sg
+from symdetect.symbolgen import FilesSequence
+# import symdetect.symbolgen as sg
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +12,10 @@ from tensorflow.keras.preprocessing.image import img_to_array
 
 
 def train_gryphon(dir: pathlib.Path) -> None:
+    image_size = (256, 256)
+    batch_size = 25
+
+    # Load files from the dataset.
     files = id.gryphon_image_paths(dir)
 
     if files is None:
@@ -24,23 +29,31 @@ def train_gryphon(dir: pathlib.Path) -> None:
     train_set = files[:-num_test_files]
     validation_set = files[-num_test_files:]
 
-    print(f'Total number of JPG images found={len(files)}')
-    print(f' Train files={len(train_set)}')
-    print(f' Validation files={len(validation_set)}')
+    # Create test and validation sequences.
+    train_seq = FilesSequence(
+        train_set, image_size=image_size, batch_size=batch_size, seed=1598)
+    validation_seq = FilesSequence(
+        validation_set, image_size=image_size, batch_size=batch_size, seed=1033)
 
-    # random.seed(177)
+    print(f'Total number of JPG images found={len(files)}')
+    print(f' Train files={len(train_set)}, train batches={len(train_seq)}')
+    print(
+        f' Validation files={len(validation_set)}, validation batches={len(validation_seq)}')
+
+    # Visualize a few images from a batch.
+    X, Y = train_seq[random.randint(0, len(train_seq))]
 
     plt.figure(figsize=(9, 9))
+    for num, idx in enumerate([0, 3, 6, 14]):
+        plt.subplot(4, 2, 2 * num + 1)
+        plt.imshow(X[idx], cmap='gray')
+        plt.title('image with HUD')
+        plt.axis('off')
 
-    for num, idx in enumerate([12, 98, 456]):
-        im, mask = sg.from_image_path(train_set[idx])
-        im = img_to_array(im).astype(np.float32) / 255.
-        mask = img_to_array(mask).astype(np.float32)
-
-        plt.subplot(3, 2, 2 * num + 1)
-        plt.imshow(im, cmap='gray')
-        plt.subplot(3, 2, 2 * num + 2)
-        plt.imshow(mask, cmap='gray')
+        plt.subplot(4, 2, 2 * num + 2)
+        plt.imshow(Y[idx], cmap='gray')
+        plt.title('mask')
+        plt.axis('off')
 
     plt.show()
 
