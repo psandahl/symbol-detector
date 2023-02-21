@@ -4,7 +4,7 @@ import random
 
 import symdetect.imagedataset as id
 from symdetect.symbolgen import FilesSequence
-# import symdetect.symbolgen as sg
+import symdetect.unet as unet
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 
 def train_gryphon(dir: pathlib.Path) -> None:
     image_size = (256, 256)
-    batch_size = 25
+    batch_size = 5
 
     # Load files from the dataset.
     files = id.gryphon_image_paths(dir)
@@ -40,22 +40,25 @@ def train_gryphon(dir: pathlib.Path) -> None:
     print(
         f' Validation files={len(validation_set)}, validation batches={len(validation_seq)}')
 
+    unet.build_and_train(train_seq=train_seq, validation_seq=validation_seq,
+                         image_size=image_size, model_path=pathlib.Path('models/firsttry.h5'))
+
     # Visualize a few images from a batch.
-    X, Y = train_seq[random.randint(0, len(train_seq))]
+    # X, Y = train_seq[random.randint(0, len(train_seq))]
 
-    plt.figure(figsize=(9, 9))
-    for num, idx in enumerate([0, 3, 6, 14]):
-        plt.subplot(4, 2, 2 * num + 1)
-        plt.imshow(X[idx], cmap='gray')
-        plt.title('image with HUD')
-        plt.axis('off')
+    # plt.figure(figsize=(9, 9))
+    # for num, idx in enumerate([0, 3, 6, 14]):
+    #    plt.subplot(4, 2, 2 * num + 1)
+    #    plt.imshow(X[idx], cmap='gray')
+    #    plt.title('image with HUD')
+    #    plt.axis('off')
 
-        plt.subplot(4, 2, 2 * num + 2)
-        plt.imshow(Y[idx], cmap='gray')
-        plt.title('mask')
-        plt.axis('off')
+    #    plt.subplot(4, 2, 2 * num + 2)
+    #    plt.imshow(Y[idx], cmap='gray')
+    #    plt.title('mask')
+    #    plt.axis('off')
 
-    plt.show()
+    # plt.show()
 
 
 def main() -> None:

@@ -10,9 +10,22 @@ from tensorflow.keras.preprocessing.image import img_to_array
 
 
 class FilesSequence(keras.utils.Sequence):
+    """
+    Sequence for image based training datasets.
+    """
+
     def __init__(self: FilesSequence, image_set: list[pathlib.Path],
                  image_size: tuple[int, int], batch_size: int,
                  seed: int = 1598) -> None:
+        """
+        Create the FilesSequence.
+
+        Parameters:
+            image_set: List of image paths.
+            image_size: The image size to resize images to.
+            batch_size: The batch size, that each call to __getitem__ shall give.
+            seed: Random seed.
+        """
         self.image_set = image_set
         self.image_size = image_size
         self.batch_size = batch_size
