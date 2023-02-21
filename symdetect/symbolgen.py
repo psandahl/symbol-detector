@@ -1,6 +1,16 @@
+import pathlib
 import random
 
 from PIL import Image, ImageDraw
+
+
+def from_image_path(path: pathlib.Path) -> tuple[Image.Image, Image.Image]:
+    with Image.open(path, mode='r') as im:
+        im = im.convert(mode='L')
+        hud, mask = random_hud(im.size)
+        im = Image.composite(hud, im, mask)
+
+        return im, mask
 
 
 def random_hud(size: tuple[int, int]) -> tuple[Image.Image, Image.Image]:
